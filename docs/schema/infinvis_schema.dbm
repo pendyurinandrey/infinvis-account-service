@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+ Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="1.1.6" use-changelog="false" max-obj-count="13"
+	 last-position="0,45" last-zoom="1.2" scene-rect="-60,0,1630.8,1113.32"
+	 default-schema="public" default-owner="postgres"
+	 layers="Default layer"
+	 active-layers="0"
+	 layer-name-colors="#000000"
+	 layer-rect-colors="#b4b4b4"
+	 show-layer-names="false" show-layer-rects="false">
+<database name="pvdb" is-template="false" allow-conns="true">
+</database>
+
+<schema name="public" layers="0" fill-color="#e1e1e1" name-color="#000000" sql-disabled="true">
+</schema>
+
+<table name="portfolios" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="720" y="60"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+	</column>
+	<column name="name">
+		<type name="varchar" length="128"/>
+	</column>
+	<column name="owner_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<constraint name="portfolios_pk" type="pk-constr" table="public.portfolios">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="users" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1140" y="60"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+	</column>
+	<column name="username" not-null="true">
+		<type name="varchar" length="128"/>
+	</column>
+	<column name="password" not-null="true">
+		<type name="varchar" length="128"/>
+	</column>
+	<constraint name="users_pk" type="pk-constr" table="public.users">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="users_username_ui" type="uq-constr" table="public.users">
+		<columns names="username" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<usertype name="custom_field_type_compatible_with_enum" configuration="enumeration">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<enumeration label="fin_accounts"/>
+</usertype>
+
+<table name="custom_field_types" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1080" y="360"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="64"/>
+	</column>
+	<column name="data_type" not-null="true">
+		<type name="varchar" length="16"/>
+	</column>
+	<column name="compatible_with">
+		<type name="public.custom_field_type_compatible_with_enum" length="0"/>
+	</column>
+	<constraint name="custom_field_types_name_ui" type="uq-constr" table="public.custom_field_types">
+		<columns names="name" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="custom_field_types_pk" type="pk-constr" table="public.custom_field_types">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="assets" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="760" y="920"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+	</column>
+	<column name="asset_type_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="128"/>
+	</column>
+	<column name="isin">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="figi">
+		<type name="varchar" length="12"/>
+	</column>
+	<column name="ticker">
+		<type name="varchar" length="16"/>
+	</column>
+	<constraint name="currencies_name_ui" type="uq-constr" table="public.assets">
+		<columns names="name" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="currencies_pk" type="pk-constr" table="public.assets">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<usertype name="account_type_enum" configuration="enumeration">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<enumeration label="money"/>
+	<enumeration label="assets"/>
+</usertype>
+
+<table name="fin_account_types" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="300" y="220"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="64"/>
+	</column>
+	<constraint name="fin_account_types_name_ui" type="uq-constr" table="public.fin_account_types">
+		<columns names="name" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="fin_account_types_pk" type="pk-constr" table="public.fin_account_types">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="accounts" layers="0" collapse-mode="2" max-obj-count="10" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="700" y="300"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+	</column>
+	<column name="type_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="owner_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="account_type" not-null="true">
+		<type name="public.account_type_enum" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="128"/>
+	</column>
+	<column name="is_archived" not-null="true" default-value="false">
+		<type name="bool" length="0"/>
+	</column>
+	<column name="is_in_balance" not-null="true" default-value="true">
+		<type name="bool" length="0"/>
+	</column>
+	<column name="start_balance" not-null="true" default-value="0">
+		<type name="numeric" length="38" precision="10"/>
+	</column>
+	<column name="custom_fields">
+		<type name="jsonb" length="0"/>
+	</column>
+	<constraint name="fin_accounts_pk" type="pk-constr" table="public.accounts">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<usertype name="money_transaction_type_enum" configuration="enumeration">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<enumeration label="income"/>
+	<enumeration label="outcome"/>
+	<enumeration label="transfer"/>
+</usertype>
+
+<table name="projects" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="340" y="820"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="255"/>
+	</column>
+	<constraint name="projects_pk" type="pk-constr" table="public.projects">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="asset_types" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="320" y="960"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="32"/>
+	</column>
+	<constraint name="asset_type_name_ui" type="uq-constr" table="public.asset_types">
+		<columns names="name" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="asset_type_pk" type="pk-constr" table="public.asset_types">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="categories" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="-20" y="640"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="255"/>
+	</column>
+	<constraint name="categories_pk" type="pk-constr" table="public.categories">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="money_transactions_categories" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="280" y="640"/>
+	<column name="transaction_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="category_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<constraint name="money_transactions_categories_pk" type="pk-constr" table="public.money_transactions_categories">
+		<columns names="transaction_id,category_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="money_transactions" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="760" y="620"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+	</column>
+	<column name="external_transaction_id">
+		<type name="varchar" length="64"/>
+	</column>
+	<column name="project_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="asset_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="account_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="amount">
+		<type name="numeric" length="38" precision="10"/>
+	</column>
+	<column name="executed_at" not-null="true">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="transaction_type" not-null="true">
+		<type name="public.money_transaction_type_enum" length="0"/>
+	</column>
+	<constraint name="transactions_pk" type="pk-constr" table="public.money_transactions">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<constraint name="portfolios_owner_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="RESTRICT" ref-table="public.users" table="public.portfolios">
+	<columns names="owner_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="assets_type_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="RESTRICT" ref-table="public.asset_types" table="public.assets">
+	<columns names="asset_type_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fin_accounts_type_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="RESTRICT" ref-table="public.fin_account_types" table="public.accounts">
+	<columns names="type_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fin_accounts_owner_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="RESTRICT" ref-table="public.users" table="public.accounts">
+	<columns names="owner_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="money_transactions_categories_transaction_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="RESTRICT" ref-table="public.money_transactions" table="public.money_transactions_categories">
+	<columns names="transaction_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="money_transactions_categories_category_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="RESTRICT" ref-table="public.categories" table="public.money_transactions_categories">
+	<columns names="category_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="money_transactions_asset_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="RESTRICT" ref-table="public.assets" table="public.money_transactions">
+	<columns names="asset_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="money_transactions_account_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="RESTRICT" ref-table="public.accounts" table="public.money_transactions">
+	<columns names="account_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="money_transactions_project_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.projects" table="public.money_transactions">
+	<columns names="project_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<relationship name="rel_portfolios_users" type="relfk" layers="0"
+	 src-table="public.portfolios"
+	 dst-table="public.users" reference-fk="portfolios_owner_id_fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_fin_accounts_fin_account_types" type="relfk" layers="0"
+	 src-table="public.accounts"
+	 dst-table="public.fin_account_types" reference-fk="fin_accounts_type_id_fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_fin_accounts_users" type="relfk" layers="0"
+	 src-table="public.accounts"
+	 dst-table="public.users" reference-fk="fin_accounts_owner_id_fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_money_transactions_assets" type="relfk" layers="0"
+	 src-table="public.money_transactions"
+	 dst-table="public.assets" reference-fk="money_transactions_asset_id_fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_money_transactions_accounts" type="relfk" layers="0"
+	 src-table="public.money_transactions"
+	 dst-table="public.accounts" reference-fk="money_transactions_account_id_fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_money_transactions_projects" type="relfk" layers="0"
+	 src-table="public.money_transactions"
+	 dst-table="public.projects" reference-fk="money_transactions_project_id_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_assets_asset_type" type="relfk" layers="0"
+	 src-table="public.assets"
+	 dst-table="public.asset_types" reference-fk="assets_type_id_fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_money_transactions_categories_money_transactions" type="relfk" layers="0"
+	 src-table="public.money_transactions_categories"
+	 dst-table="public.money_transactions" reference-fk="money_transactions_categories_transaction_id_fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_money_transactions_categories_categories" type="relfk" layers="0"
+	 src-table="public.money_transactions_categories"
+	 dst-table="public.categories" reference-fk="money_transactions_categories_category_id_fk"
+	 src-required="false" dst-required="true"/>
+
+</dbmodel>

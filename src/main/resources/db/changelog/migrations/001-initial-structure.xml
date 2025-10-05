@@ -1,0 +1,147 @@
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="apendiurin" id="001-initial-structure">
+        <sql>
+            CREATE TABLE portfolios (
+                id bigserial NOT NULL,
+                name varchar(128),
+                owner_id bigint NOT NULL,
+                CONSTRAINT portfolios_pk PRIMARY KEY (id)
+            );
+
+            CREATE TABLE users (
+                id bigserial NOT NULL,
+                username varchar(128) NOT NULL,
+                password varchar(128) NOT NULL,
+                CONSTRAINT users_pk PRIMARY KEY (id),
+                CONSTRAINT users_username_ui UNIQUE (username)
+            );
+
+            CREATE TYPE custom_field_type_compatible_with_enum AS
+            ENUM ('fin_accounts');
+
+            CREATE TABLE custom_field_types (
+                id bigserial NOT NULL,
+                name varchar(64) NOT NULL,
+                data_type varchar(16) NOT NULL,
+                compatible_with custom_field_type_compatible_with_enum,
+                CONSTRAINT custom_field_types_name_ui UNIQUE (name),
+                CONSTRAINT custom_field_types_pk PRIMARY KEY (id)
+            );
+
+            CREATE TABLE assets (
+                id bigserial NOT NULL,
+                asset_type_id bigint NOT NULL,
+                name varchar(128) NOT NULL,
+                isin varchar(12),
+                figi varchar(12),
+                ticker varchar(16),
+                CONSTRAINT currencies_name_ui UNIQUE (name),
+                CONSTRAINT currencies_pk PRIMARY KEY (id)
+            );
+
+            CREATE TYPE account_type_enum AS
+            ENUM ('money','assets');
+
+            CREATE TABLE fin_account_types (
+                id bigserial NOT NULL,
+                name varchar(64) NOT NULL,
+                CONSTRAINT fin_account_types_name_ui UNIQUE (name),
+                CONSTRAINT fin_account_types_pk PRIMARY KEY (id)
+            );
+
+            CREATE TABLE accounts (
+                id bigserial NOT NULL,
+                type_id bigint NOT NULL,
+                owner_id bigint NOT NULL,
+                account_type account_type_enum NOT NULL,
+                name varchar(128) NOT NULL,
+                is_archived bool NOT NULL DEFAULT false,
+                is_in_balance bool NOT NULL DEFAULT true,
+                start_balance numeric(38,10) NOT NULL DEFAULT 0,
+                custom_fields jsonb,
+                CONSTRAINT fin_accounts_pk PRIMARY KEY (id)
+            );
+
+            CREATE TYPE money_transaction_type_enum AS
+            ENUM ('income','outcome','transfer');
+
+            CREATE TABLE projects (
+                id bigserial NOT NULL,
+                name varchar(255) NOT NULL,
+                CONSTRAINT projects_pk PRIMARY KEY (id)
+            );
+
+            CREATE TABLE asset_types (
+                id bigserial NOT NULL,
+                name varchar(32) NOT NULL,
+                CONSTRAINT asset_type_name_ui UNIQUE (name),
+                CONSTRAINT asset_type_pk PRIMARY KEY (id)
+            );
+
+            CREATE TABLE categories (
+                id bigserial NOT NULL,
+                name varchar(255) NOT NULL,
+                CONSTRAINT categories_pk PRIMARY KEY (id)
+            );
+
+            CREATE TABLE money_transactions_categories (
+                transaction_id bigint NOT NULL,
+                category_id bigint NOT NULL,
+                CONSTRAINT money_transactions_categories_pk PRIMARY KEY (transaction_id,category_id)
+            );
+
+            CREATE TABLE money_transactions (
+                id bigserial NOT NULL,
+                external_transaction_id varchar(64),
+                project_id bigint,
+                asset_id bigint NOT NULL,
+                account_id bigint NOT NULL,
+                amount numeric(38,10),
+                executed_at timestamptz NOT NULL,
+                transaction_type money_transaction_type_enum NOT NULL,
+                CONSTRAINT transactions_pk PRIMARY KEY (id)
+            );
+
+            ALTER TABLE portfolios ADD CONSTRAINT portfolios_owner_id_fk FOREIGN KEY (owner_id)
+            REFERENCES users (id) MATCH SIMPLE
+            ON DELETE RESTRICT ON UPDATE NO ACTION;
+
+            ALTER TABLE assets ADD CONSTRAINT assets_type_id_fk FOREIGN KEY (asset_type_id)
+            REFERENCES asset_types (id) MATCH SIMPLE
+            ON DELETE RESTRICT ON UPDATE NO ACTION;
+
+            ALTER TABLE accounts ADD CONSTRAINT fin_accounts_type_id_fk FOREIGN KEY (type_id)
+            REFERENCES fin_account_types (id) MATCH SIMPLE
+            ON DELETE RESTRICT ON UPDATE NO ACTION;
+
+            ALTER TABLE accounts ADD CONSTRAINT fin_accounts_owner_id_fk FOREIGN KEY (owner_id)
+            REFERENCES users (id) MATCH SIMPLE
+            ON DELETE RESTRICT ON UPDATE NO ACTION;
+
+            ALTER TABLE money_transactions_categories ADD CONSTRAINT money_transactions_categories_transaction_id_fk FOREIGN KEY (transaction_id)
+            REFERENCES money_transactions (id) MATCH SIMPLE
+            ON DELETE RESTRICT ON UPDATE NO ACTION;
+
+            ALTER TABLE money_transactions_categories ADD CONSTRAINT money_transactions_categories_category_id_fk FOREIGN KEY (category_id)
+            REFERENCES categories (id) MATCH SIMPLE
+            ON DELETE RESTRICT ON UPDATE NO ACTION;
+
+            ALTER TABLE money_transactions ADD CONSTRAINT money_transactions_asset_id_fk FOREIGN KEY (asset_id)
+            REFERENCES assets (id) MATCH SIMPLE
+            ON DELETE RESTRICT ON UPDATE NO ACTION;
+
+            ALTER TABLE money_transactions ADD CONSTRAINT money_transactions_account_id_fk FOREIGN KEY (account_id)
+            REFERENCES accounts (id) MATCH SIMPLE
+            ON DELETE RESTRICT ON UPDATE NO ACTION;
+
+            ALTER TABLE money_transactions ADD CONSTRAINT money_transactions_project_id_fk FOREIGN KEY (project_id)
+            REFERENCES projects (id) MATCH SIMPLE
+            ON DELETE NO ACTION ON UPDATE NO ACTION;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
