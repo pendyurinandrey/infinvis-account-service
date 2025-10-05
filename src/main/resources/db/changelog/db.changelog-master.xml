@@ -5,5 +5,6 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <include file="migrations/001-initial-structure.xml" relativeToChangelogFile="true"/>
+    <include file="migrations/002-added-owner-id.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
